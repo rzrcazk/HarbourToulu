@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 
 """
-File: jd_opencardH0303.py(3.3-3.13 花样宠你 美有道理)
+File: jd_opencardH031501.py(3.15-3.25 春日限定 焕新礼赞)
 Author: HarbourJ
-Date: 2023/3/3 00:00
+Date: 2023/3/15 00:00
 TG: https://t.me/HarbourToulu
-cron: 0 0 */3 3-13 3 *
-new Env('3.3-3.13 花样宠你 美有道理(金币)');
-ActivityEntry: https://lzdz1-isv.isvjcloud.com/dingzhi/joinCommon/activity/activity?activityId=f6f6a5ce26f948b8b3de45c3e36a5db5
+cron: 0 0 */3 15-25 3 *
+new Env('3.15-3.25 春日限定 焕新礼赞(金币)');
+ActivityEntry: https://lzdz1-isv.isvjcloud.com/dingzhi/joinCommon/activity/activity?activityId=0c01980998b0461d9e80e230e76a9863
 """
 
 import time, requests, sys, re, os, json, random
@@ -37,8 +37,8 @@ redis_port = os.environ.get("redis_port") if os.environ.get("redis_port") else "
 redis_pwd = os.environ.get("redis_pwd") if os.environ.get("redis_pwd") else ""
 inviterUuid = os.environ.get("jd_joinCommon_uuid") if os.environ.get("jd_joinCommon_uuid") else ""
 
-activityId = "f6f6a5ce26f948b8b3de45c3e36a5db5"
-shopId = "1000334541"
+activityId = "0c01980998b0461d9e80e230e76a9863"
+shopId = "1000090821"
 activity_url = f"https://lzdz1-isv.isvjcloud.com/dingzhi/joinCommon/activity/5929859?activityId={activityId}&shareUuid={inviterUuid}&adsource=null&shareuserid4minipg=null&lng=00.000000&lat=00.000000&sid=&un_area=&&shopid={shopId}"
 print(f"【🛳活动入口】https://lzdz1-isv.isvjcloud.com/dingzhi/joinCommon/activity/5929859?activityId={activityId}\n\n🤖本活动为金币邀请,仅开卡与加购,不邀请‼️\n\n🤖本活动为金币邀请,仅开卡与加购,不邀请‼️\n\n🤖本活动为金币邀请,仅开卡与加购,不邀请‼️\n\n")
 
