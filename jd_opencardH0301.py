@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 """
-File: jd_opencardH0117.py((1.17-1.24 冬日焕新大牌联盟)
+File: jd_opencardH0301.py(3.1-3.8 大牌慧聚 放肆购美)
 Author: HarbourJ
-Date: 2024/1/17 00:00
+Date: 2024/3/1 00:00
 TG: https://t.me/HarbourToulu
-cron: 0 0 */3 17-24 1 *
-new Env('冬日焕新 大牌联盟');
-ActivityEntry: https://lzdz1-isv.isvjcloud.com/m/unite/4120064/dzlh0001/?activityId=998f9a1d6e4f4fdc8e6ee8d570ff5519&venderId=1000003829&adsource=null
+cron: 0 0 */3 1-8 3 *
+new Env('大牌慧聚 放肆购美');
+ActivityEntry: https://lzdz1-isv.isvjcloud.com/m/unite/dzlh0001?activityId=d084308206b84f1f87380a38d3626759&venderId=1000003829&adSource=DLJDZYQJD
 并发变量：export jd_joinCommon_uuid="你的uuid"
-并发命令：task HarbourJ_HarbourToulu_main/jd_opencardH0117.py conc JD_COOKIE 1-20
+并发命令：task HarbourJ_HarbourToulu_main/jd_opencardH0301.py conc JD_COOKIE 1-20
 """
 
 import time ,requests ,sys ,re ,os ,json ,random #line:1
@@ -37,7 +37,7 @@ redis_url =os .environ .get ("redis_url")if os .environ .get ("redis_url")else "
 redis_port =os .environ .get ("redis_port")if os .environ .get ("redis_port")else "6379"#line:23
 redis_pwd =os .environ .get ("redis_pwd")if os .environ .get ("redis_pwd")else ""#line:24
 inviterUuid =os .environ .get ("jd_joinCommon_uuid")if os .environ .get ("jd_joinCommon_uuid")else ""#line:25
-activityId ="998f9a1d6e4f4fdc8e6ee8d570ff5519"#line:27
+activityId ="d084308206b84f1f87380a38d3626759"#line:27
 shopId ="1000003829"#line:28
 activity_url =f"https://lzdz1-isv.isvjcloud.com/dingzhi/joinCommon/activity/5929859?activityId={activityId}&shareUuid={inviterUuid}&adsource=null&shareuserid4minipg=null&lng=00.000000&lat=00.000000&sid=&un_area=&&shopid={shopId}"#line:29
 print (f"【🛳活动入口】https://lzdz1-isv.isvjcloud.com/dingzhi/joinCommon/activity/5929859?activityId={activityId}")#line:30
