@@ -12,6 +12,7 @@ new Env('关注有礼-JK');
 ActivityEntry: https://shop.m.jd.com/?shopId=12342136
                变量 export jd_shopFollowGiftId="店铺shopId1&店铺shopId2" #变量为店铺🆔,建议一次仅运行2-3个shopId
                    export jd_shopFollowGiftRunNums=xx #变量为需要运行账号数量,默认跑前10个账号
+                   export jd_shopFollowGiftRunJF="true" #变量为跑积分关注,默认不跑
 """
 
 import time ,requests ,sys ,re ,os ,json ,random #line:1
@@ -39,9 +40,12 @@ redis_url =os .environ .get ("redis_url")if os .environ .get ("redis_url")else "
 redis_pwd =os .environ .get ("redis_pwd")if os .environ .get ("redis_pwd")else ""#line:25
 jd_shopFollowGiftId =os .environ .get ("jd_shopFollowGiftId")if os .environ .get ("jd_shopFollowGiftId")else ""#line:26
 runNums =os .environ .get ("jd_shopFollowGiftRunNums")if os .environ .get ("jd_shopFollowGiftRunNums")else 10 #line:27
+jfRun = os.environ.get("jd_shopFollowGiftRunJF") if os.environ.get("jd_shopFollowGiftRunJF") else False
 if not jd_shopFollowGiftId :#line:29
     print ("⚠️未发现有效活动变量jd_shopFollowGiftId,退出程序!")#line:30
     sys .exit ()#line:31
+if not jfRun:
+    print('🤖本次关注默认不跑积分,若跑积分可设置自定义变量:export jd_shopFollowGiftRunJF="true"')
 runNums =int (runNums )#line:33
 if runNums ==10 :#line:34
     print ('🤖本次关注默认跑前10个账号,设置自定义变量:export jd_shopFollowGiftRunNums="需要运行加购的ck数量"')#line:35
@@ -59,15 +63,25 @@ def check (O000000O0O0O0O000 ,OO0O0O0O0OOOOO00O ):#line:49
     try :#line:50
         OO00O0OOO000O00OO ='https://me-api.jd.com/user_new/info/GetJDUserInfoUnion'#line:51
         OO000OOOOO0O0OO0O ={"Host":"me-api.jd.com","Accept":"*/*","Connection":"keep-alive","Cookie":OO0O0O0O0OOOOO00O ,"User-Agent":O000000O0O0O0O000 ,"Accept-Language":"zh-cn","Referer":"https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&","Accept-Encoding":"gzip, deflate",}#line:61
-        OO0O0OO0OO000O0O0 =requests .get (url =OO00O0OOO000O00OO ,headers =OO000OOOOO0O0OO0O ,timeout =None ).text #line:62
+        OO0O0OO0OO000O0O0 =requests .get (url =OO00O0OOO000O00OO ,headers =OO000OOOOO0O0OO0O ,timeout =5 ).text #line:62
         O00OOO0000O00O000 =json .loads (OO0O0OO0OO000O0O0 )#line:63
         if O00OOO0000O00O000 ['retcode']=='1001':#line:64
             return {'code':1001 ,'data':'⚠️当前ck已失效，请检查'}#line:65
         elif O00OOO0000O00O000 ['retcode']=='0'and 'userInfo'in O00OOO0000O00O000 ['data']:#line:66
             O000OO0O00OOO00O0 =O00OOO0000O00O000 ['data']['userInfo']['baseInfo']['nickname']#line:67
             return {'code':200 ,'name':O000OO0O00OOO00O0 ,'ck':OO0O0O0O0OOOOO00O }#line:68
-    except Exception as OO0OO0OOO000OOOOO :#line:69
-        return {'code':0 ,'data':OO0OO0OOO000OOOOO }#line:70
+    except Exception as OO0OO0OOO000OOOOO:#line:69
+        print('check接口请求失败 -> ' + str(OO0OO0OOO000OOOOO) + ' 重试~')#line:70
+        OO00O0OOO000O00OO = "https://plogin.m.jd.com/cgi-bin/ml/islogin"
+        OO000OOOOO0O0OO0O ={"Host":"plogin.m.jd.com","Accept":"*/*","Cookie":OO0O0O0O0OOOOO00O ,"User-Agent":O000000O0O0O0O000 ,"Accept-Language":"zh-CN,zh;q=0.9","Accept-Encoding":"gzip, deflate, br, zstd"}#line:61
+        try:
+            O00OOO0000O00O000 = requests.get(url=OO00O0OOO000O00OO, headers=OO000OOOOO0O0OO0O, timeout=5).json()
+            if O00OOO0000O00O000["islogin"] == "1":
+                return {'code': 200}
+            else:
+                return {'code': 1001, 'data': '⚠️当前ck已失效，请检查'}
+        except Exception as OO0OO0OOO000OOOOO:
+            return {'code': 0, 'data': 'check接口请求失败 -> ' + str(OO0OO0OOO000OOOOO)}
 def get_venderId (O0O00O000O0OOOO0O ,O000OO0OO0O000000 ):#line:72
     OOO00OOOO00OO000O =f'https://api.m.jd.com/client.action?functionId=whx_getMShopOutlineInfo&body=%7B%22shopId%22%3A%22{O000OO0OO0O000000}%22%2C%22source%22%3A%22m-shop%22%7D&appid=shop_view&clientVersion=11.0.0&client=wh5'#line:73
     OO0O0OOOOOOO00000 ={'accept':'*/*','accept-encoding':'gzip, deflate, br','accept-language':'zh-CN,zh;q=0.9','origin':'https://shop.m.jd.com','referer':'https://shop.m.jd.com/','user-agent':ua ,'cookie':cookie }#line:82
@@ -106,8 +120,13 @@ def getShopHomeActivityInfo (O0O0000O0OOOOOOO0 ,OO0O0OOOO0O000OOO ,OO0OO000OO0O0
                     OOOOOOOO0O00OO00O =OO000O000OOOOOOOO ['redWord']#line:136
                     OOOOO00OOO0O0O0O0 =OO000O000OOOOOOOO ['rearWord']#line:137
                     print (f'\t🎁关注有礼奖励：{OOOOOOOO0O00OO00O}{OOOOO00OOO0O0O0O0}')#line:138
+                    if jfRun:
+                        return O000OO00O0000O0OO['result']['activityId']
                     if OOOOO00OOO0O0O0O0 .find ('京豆')>-1 :#line:139
                         return O000OO00O0000O0OO ['result']['activityId']#line:140
+                    else:
+                        print(f'\t默认不跑积分活动,退出程序！')
+                        os._exit(0)
             else :#line:141
                 print ('\t⛈未发现关注有礼活动')#line:142
                 return #line:143
@@ -176,6 +195,10 @@ if __name__ =='__main__':#line:182
                             drawResultDesc =drawResult ['result']['followDesc']#line:231
                             if '关注成功'in str (drawResultDesc ):#line:232
                                 drawResultTotal =''#line:233
+                                if "alreadyReceivedGifts" not in str(drawResult):
+                                    print('⛈关注成功,奖励领取失败！')
+                                    MSG1 += f"\n    ⛈【{shopName}】关注成功,奖励领取失败！"
+                                    continue
                                 drawResultPrizes =drawResult ['result']['alreadyReceivedGifts']#line:234
                                 for drawResultPrize in drawResultPrizes :#line:235
                                     drawResultTotal +=str (drawResultPrize ['redWord'])+drawResultPrize ['rearWord']+''#line:236
